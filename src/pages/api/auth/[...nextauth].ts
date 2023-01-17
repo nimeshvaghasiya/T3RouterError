@@ -5,10 +5,24 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db";
+import { createInnerTRPCContext } from "../../../server/api/trpc";
+import { appRouter } from "../../../server/api/root";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      const ctx = await createInnerTRPCContext({ session: null });
+      const caller = appRouter.createCaller(ctx);
+      const permissions = await caller.role.getAllPermissions();
+      return true;
+    },
+    async jwt({ token, user }) { //, account
+      if (user) {
+        token.userId = user.id;
+      }
+      return token;
+    },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
@@ -33,6 +47,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  session: {
+    strategy: 'jwt'
+  },
 };
 
 export default NextAuth(authOptions);
