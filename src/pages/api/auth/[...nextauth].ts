@@ -17,12 +17,12 @@ export const authOptions: NextAuthOptions = {
       const permissions = await caller.role.getAllPermissions();
       return true;
     },
-    async jwt({ token, user }) { //, account
-      if (user) {
-        token.userId = user.id;
-      }
-      return token;
-    },
+    // async jwt({ token, user }) { //, account
+    //   if (user) {
+    //     token.userId = user.id;
+    //   }
+    //   return token;
+    // },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
@@ -47,9 +47,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  session: {
-    strategy: 'jwt'
-  },
+  // session: {
+  //   strategy: 'jwt'
+  // },
 };
 
 export default NextAuth(authOptions);
