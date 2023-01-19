@@ -5,7 +5,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "../../utils/api";
 
 
-const Home: NextPage = () => {
+const Role: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const permissions = api.role.getAllPermissions.useQuery();
 
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Role;
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
