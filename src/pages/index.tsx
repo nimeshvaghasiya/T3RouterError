@@ -7,7 +7,7 @@ import { api } from "../utils/api";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const permissions = api.role.getAllPermissions.useQuery();
+  const permissions = api.role.usersPermissions.useQuery();
 
   return (
     <>
@@ -50,7 +50,9 @@ const Home: NextPage = () => {
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
             </p>
             <p className="text-2xl text-red-700">
-              {permissions.data ? permissions.data : "Loading tRPC permission query..."}
+              {permissions.data
+                ? JSON.stringify(permissions.data)
+                : "Loading tRPC permission query..."}
             </p>
             <p className="text-2xl text-yellow-500">
               <Link href="/roles">Roles</Link>

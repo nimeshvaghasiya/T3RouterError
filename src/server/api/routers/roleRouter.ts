@@ -1,13 +1,10 @@
-
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { getPermissionsByUser } from "../../permissions";
 
 export const roleRouter = createTRPCRouter({
-  getAllPermissions: publicProcedure.query(({ ctx }) => {
+  usersPermissions: protectedProcedure.query(async ({ ctx }) => {
     console.log(ctx); // Issue: context got undefined, and below query throws error.
-    debugger
-    //Note: schema is not updated with permissions table so commented out below query.
-    //const permissions = ctx.prisma.permissions.findMany({where: { roleId: ctx.user.id}})
-    //return permissions;
-    return 'users,other';
+    const permissions = await getPermissionsByUser(ctx.session.user.id);
+    return permissions;
   }),
 });

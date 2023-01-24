@@ -5,21 +5,15 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db";
-import { getAllPermissions } from "./permissions";
+import { getPermissionsByUser } from "../../../server/permissions";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      const permissions = await getAllPermissions();
-      return true;
+    async signIn({ user }) {
+      const permissions = await getPermissionsByUser(user.id);
+      return permissions.find((p) => p.name === "admin") !== undefined;
     },
-    // async jwt({ token, user }) { //, account
-    //   if (user) {
-    //     token.userId = user.id;
-    //   }
-    //   return token;
-    // },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
@@ -44,9 +38,6 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  // session: {
-  //   strategy: 'jwt'
-  // },
 };
 
 export default NextAuth(authOptions);
