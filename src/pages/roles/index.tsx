@@ -1,11 +1,13 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "../../utils/api";
 
-const Role: NextPage = () => {
+
+const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const permissions = api.role.usersPermissions.useQuery();
+  const permissions = api.role.getAllPermissions.useQuery();
 
   return (
     <>
@@ -24,9 +26,7 @@ const Role: NextPage = () => {
               {hello.data ? hello.data.greeting : "Loading tRPC query..."}
             </p>
             <p className="text-2xl text-red-700">
-              {permissions.data
-                ? JSON.stringify(permissions.data)
-                : "Loading tRPC permission query..."}
+              {permissions.data ? permissions.data : "Loading tRPC permission query..."}
             </p>
             <AuthShowcase />
           </div>
@@ -36,14 +36,14 @@ const Role: NextPage = () => {
   );
 };
 
-export default Role;
+export default Home;
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined }
+    { enabled: sessionData?.user !== undefined },
   );
 
   return (
